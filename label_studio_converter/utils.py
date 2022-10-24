@@ -131,14 +131,22 @@ def download(url, output_dir, filename=None, project_dir=None, return_relative_p
     filepath = os.path.join(output_dir, filename)
     if not os.path.exists(filepath):
         logger.info('Download {url} to {filepath}'.format(url=url, filepath=filepath))
-        if download_resources:
-            r = requests.get(url)
-            r.raise_for_status()
-            with io.open(filepath, mode='wb') as fout:
-                fout.write(r.content)
+        download_content(filepath, url)
     if return_relative_path:
         return os.path.join(os.path.basename(output_dir), filename)
     return filepath
+
+
+def download_content(filepath, url):
+    if url.startswith("s3"):
+        path, ext = os.path.splitext(filepath)
+        with io.open(path + ".s3", mode='wb') as fout:
+            fout.write(url)
+        return
+    r = requests.get(url)
+    r.raise_for_status()
+    with io.open(filepath, mode='wb') as fout:
+        fout.write(r.content)
 
 
 def get_image_size(image_path):
