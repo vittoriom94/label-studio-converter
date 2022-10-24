@@ -137,10 +137,10 @@ def download(url, output_dir, filename=None, project_dir=None, return_relative_p
     return filepath
 
 
-def download_content(filepath, url):
+def download_content(filepath: str, url: str):
     if url.startswith("s3"):
         path, ext = os.path.splitext(filepath)
-        with io.open(path + ".s3", mode='wb') as fout:
+        with io.open(path + ".s3", mode='w') as fout:
             fout.write(url)
         return
     r = requests.get(url)
